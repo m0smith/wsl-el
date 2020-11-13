@@ -53,11 +53,11 @@ windows box and it has WSL installed."
   (let ((wsl-exe (wsl-p)))
     (when wsl-exe
       (grep-apply-setting 'grep-command (format "%s grep  -n " wsl-exe))
-      (grep-apply-setting 'grep-template (concat wsl-exe " " "grep <X> <C> -n <R> <F>"))
+      (grep-apply-setting 'grep-template (format "%s grep <X> <C> -n <R> <F>" wsl-exe))
       (grep-apply-setting 'grep-find-command
-			  (cons (format "%s find . -type f -exec grep  -n  \"{}\" NUL \";\"" wsl-exe) 60))
+			  (cons (format "%s find . -type f -exec grep  -n  \"{}\" /dev/null \";\"" wsl-exe) 60))
       (grep-apply-setting 'grep-find-template
-			  (format "%s find <D> <X> -type f <F> -exec grep <C> -n <R> \"{}\" NUL \";\"" wsl-exe)))))
+			  (format "%s find <D> <X> -type f <F> -exec grep <C> -n <R> \"{}\" /dev/null \";\"" wsl-exe)))))
 
 (defun wsl-mode-off ()
   (setq grep-host-defaults-alist nil
