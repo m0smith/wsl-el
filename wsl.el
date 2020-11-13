@@ -47,8 +47,8 @@ windows box and it has WSL installed."
 (defun wsl-p ()
   "Return the expanded `wsl-command' if EMACS is running in Windows with WSL installed"
   (interactive)
-  (when-let (wsl-exe (expand-file-name wsl-command))
-    (when (file-exists-p wsl-exe)
+  (let ((wsl-exe (expand-file-name wsl-command)))
+    (when (and wsl-exe (file-exists-p wsl-exe))
       wsl-exe)))
 
 (defun wsl-mode-on ()
