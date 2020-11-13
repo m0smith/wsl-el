@@ -4,7 +4,8 @@
 ;; Foundation, Inc.
 
 ;; Author: Matthew O. Smith <matt@m0smith.com>
-;; Maintainer: emacs-devel@gnu.org
+;; Version: 1.0
+;; Package-Requires: ()
 ;; Keywords: tools
 
 ;; This file is NOT part of GNU Emacs.
