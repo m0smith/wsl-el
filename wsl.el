@@ -100,3 +100,7 @@ windows box and it has WSL installed."
     (if arg (kill-new clip))))
 
 (provide 'wsl)
+
+;;; wsl.el ends here
+
+
