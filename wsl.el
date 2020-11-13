@@ -30,6 +30,8 @@
 
 ;;; Code:
 
+(require 'grep)
+
 (defgroup wsl nil
   "Integration with the Window Subsystem for Linux"
   :group 'tools)
@@ -45,7 +47,7 @@ windows box and it has WSL installed."
 (defun wsl-p ()
   "Return the expanded `wsl-command' if EMACS is running in Windows with WSL installed"
   (interactive)
-  (when-let ((wsl-exe (expand-file-name wsl-command)))
+  (when-let (wsl-exe (expand-file-name wsl-command))
     (when (file-exists-p wsl-exe)
       wsl-exe)))
 
@@ -94,6 +96,6 @@ windows box and it has WSL installed."
   (interactive "P")
   (let ((clip (wsl-clipboard-to-string)))
     (insert clip)
-    (if arc (kill-new clip))))
+    (if arg (kill-new clip))))
 
 (provide 'wsl)
