@@ -77,4 +77,23 @@ windows box and it has WSL installed."
       (wsl-mode-on)
     (wsl-mode-off)))
 
+(defun wsl-copy-region-to-clipboard (start end)
+  "Copy region to Windows clipboard."
+  (interactive "r")
+  (call-process-region start end "clip.exe" nil 0))
 
+(defun wsl-clipboard-to-string ()
+  "Return Windows clipboard as a string."
+  (let ((coding-system-for-read 'dos))
+    (substring
+     (shell-command-to-string
+      "powershell.exe -Command Get-Clipboard" ) 0  -1)))
+
+(defun wsl-paste-from-clipboard (arg)
+  "Insert Windows clipboard at point. With prefix ARG, also add to kill-ring"
+  (interactive "P")
+  (let ((clip (wsl-clipboard-to-string)))
+    (insert clip)
+    (if arc (kill-new clip))))
+
+(provide 'wsl)
