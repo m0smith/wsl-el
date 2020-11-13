@@ -39,20 +39,21 @@
 
 ;;;###autoload
 (defcustom wsl-command "c:\\windows\\sysnative\\wsl.exe"
-  "The wsl.exe command that Windows uses to access the linux
-commands.  If this is present then 2 things are known: This is a
+  "The wsl.exe command that Windows uses to access the linux commands.
+If this is present then 2 things are known: This is a
 windows box and it has WSL installed."
   :type 'file
   :group 'wsl)
 
 (defun wsl-p ()
-  "Return the expanded `wsl-command' if EMACS is running in Windows with WSL installed"
+  "Return the expanded `wsl-command' if EMACS is running in Windows with WSL installed."
   (interactive)
   (let ((wsl-exe (expand-file-name wsl-command)))
     (when (and wsl-exe (file-exists-p wsl-exe))
       wsl-exe)))
 
 (defun wsl-mode-on ()
+  "What to do when function `wsl-mode' is enabled."
   (let ((wsl-exe (wsl-p)))
     (when wsl-exe
       (grep-apply-setting 'grep-command (format "%s grep  -n " wsl-exe))
@@ -63,6 +64,7 @@ windows box and it has WSL installed."
 			  (format "%s find <D> <X> -type f <F> -exec grep <C> -n <R> \"{}\" /dev/null \";\"" wsl-exe)))))
 
 (defun wsl-mode-off ()
+  "What to do when function `wsl-mode' is disabled."
   (setq grep-host-defaults-alist nil
 	grep-command nil
 	grep-template nil
@@ -81,7 +83,7 @@ windows box and it has WSL installed."
     (wsl-mode-off)))
 
 (defun wsl-copy-region-to-clipboard (start end)
-  "Copy region to Windows clipboard."
+  "Copy region (START END) to Windows clipboard."
   (interactive "r")
   (call-process-region start end "clip.exe" nil 0))
 
@@ -93,7 +95,8 @@ windows box and it has WSL installed."
       "powershell.exe -Command Get-Clipboard" ) 0  -1)))
 
 (defun wsl-paste-from-clipboard (arg)
-  "Insert Windows clipboard at point. With prefix ARG, also add to kill-ring"
+  "Insert Windows clipboard at point.
+With prefix ARG, also add to `kill-ring'."
   (interactive "P")
   (let ((clip (wsl-clipboard-to-string)))
     (insert clip)
