@@ -5,8 +5,9 @@
 
 ;; Author: Matthew O. Smith <matt@m0smith.com>
 ;; Version: 1.0
-;; Package-Requires: ()
+;; Package-Requires: ((emacs "24.1"))
 ;; Keywords: tools
+;; URL: https://github.com/m0smith/wsl-el
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -72,6 +73,7 @@ windows box and it has WSL installed."
 	grep-find-template nil)
   (grep-compute-defaults))
 
+;;;###autoload
 (define-minor-mode wsl-mode
   "Turn in integration with the Windows Subsystem for Linux integration."
   :init-value nil
