@@ -84,11 +84,16 @@ windows box and it has WSL installed."
 ;;;
 
 (defun wsl-update-jka-compra-el (program args)
+  "Add wsl.exe to the commands used by jka-compra.
+See `wsl-jka-compra-compress-programs'.
+"
   (if (member program wsl-jka-compra-compress-programs)
       (vector (wsl-p) (cons program args))
     (vector program args)))
 
 (defun wsl-update-jka-compra (v)
+  "Pull apart a member of `jka-compr-compression-info-list' and update it.
+Only updates commands found in `wsl-jka-compra-compress-programs'."
   (seq-let [regexp compress-msg compress-program compress-args
 		   uncompress-msg uncompress-program uncompress-args
 		   append-flag strip-extension-flag file-magic-chars] v
@@ -98,11 +103,16 @@ windows box and it has WSL installed."
 		uncompress-msg ucp uca
 		append-flag strip-extension-flag file-magic-chars)))))
 
-(defun wsl-update-jka-compra-on (wsl-exe)
+(defun wsl-update-jka-compra-on (_)
+  "A `wsl-on-hook' for jka-compr.
+
+Update the commands used to use wsl.exe as a shell."
   (setq jka-compr-compression-info-list (mapcar 'wsl-update-jka-compra jka-compr-compression-info-list))
   (jka-compr-update))
 
 (defun wsl-update-jka-compra-off ()
+  "A `wsl-off-hook' for jka-compr.
+Reset jka-compra back to normal functionality."
   (setq jka-compr-compression-info-list wsl-jka-compr-compression-info-list)
   (jka-compr-update))
 
@@ -112,15 +122,19 @@ windows box and it has WSL installed."
 ;;;;
 
 (defun wsl-shell-quote-argument (arg)
+  "Convert a Windows path to a Unix one.
+I am suprised this doesn't already exist"
   (message "wsl-shell-quote-argument : %s" arg)
   (when-let ((pre (string-match "^\\([a-zA-Z]\\):[/\\]\\(.*\\)$" arg)))
     (format "/mnt/%s/%s" (downcase (match-string 1 arg)) (match-string 2 arg))
   ))
 
-(defun wsl-subr-on (wsl-exe)
+(defun wsl-subr-on (_)
+  "A `wsl-on-hook' for subr."
   (advice-add 'shell-quote-argument :before-until #'wsl-shell-quote-argument))
 
 (defun wsl-subr-off ()
+  "A `wsl-off-hook' for subr."
   (advice-remove 'shell-quote-argument #'wsl-shell-quote-argument))
 
 ;;;
@@ -133,11 +147,11 @@ windows box and it has WSL installed."
   (apply old-fn (wsl-shell-quote-argument archive) args))
 
 (defun wsl-archive-on (wsl-exe)
-  (advice-add 'archive-extract-by-stdout :around #'wsl-archive-extract-by-stdout))
+  (advice-add 'archive-extract-by-stdout :around #'wsl-archive-extract-by-stdout)
   (setq archive-zip-extract (cons wsl-exe archive-zip-extract)))
 
 (defun wsl-archive-off ()
-  (advice-remove 'archive-extract-by-stdout #'wsl-archive-extract-by-stdout))
+  (advice-remove 'archive-extract-by-stdout #'wsl-archive-extract-by-stdout)
   (setq archive-zip-extract wsl-archive-zip-extract))
 
   
@@ -148,6 +162,8 @@ windows box and it has WSL installed."
 
 (defvar wsl-shell-file-name shell-file-name)
 (defvar wsl-shell-command-switch shell-command-switch)
+(defvar explicit-wsl.exe-args nil)
+(defvar explicit-cmdproxy.exe-args nil)
 
 (defun wsl-shell-on (wsl-exe)
   (setq shell-command-switch "-c"
